@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva Confirmada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Reserva Realizada com Sucesso!</h1>
+        <p>Obrigado por reservar com a biblioteca da faculdade.</p>
+        <p>Seu código de reserva é:</p>
+        <div class="codigo-reserva">{{ codigo }}</div>
+        <p>Apresente esse código ao atendente da biblioteca para retirar o livro.</p>
+
+        <a class="voltar-link" href="{{ url_for('index') }}">← Fazer nova reserva</a>
+    </div>
+</body>
+</html>

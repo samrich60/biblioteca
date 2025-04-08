@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado da Reserva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+    <h2>Resultado da Reserva</h2>
+    {% if reserva %}
+        <p><strong>Nome:</strong> {{ reserva.nome }}</p>
+        <p><strong>CPF:</strong> {{ reserva.cpf }}</p>
+        <p><strong>Livro reservado:</strong> {{ reserva.livro }}</p>
+        <p><strong>Valor:</strong> R$ {{ reserva.valor }}</p>
+    {% else %}
+        <p>Código não encontrado.</p>
+    {% endif %}
+    <a href="{{ url_for('admin') }}">← Voltar</a>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Seu Carrinho</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Seu Carrinho</h1>
+        <a href="{{ url_for('index') }}">← Voltar para os livros</a>
+    </header>
+
+    {% if carrinho %}
+        <ul>
+            {% for item in carrinho %}
+            <li>
+                <strong>{{ item.titulo }}</strong> (R$ {{ item.valor }})
+                <form action="/remover_carrinho" method="post" style="display:inline;">
+                    <input type="hidden" name="livro_id" value="{{ item.id }}">
+                    <button type="submit">Remover</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <form action="/confirmar_carrinho" method="post">
+            <input type="text" name="nome" placeholder="Seu nome" required>
+            <input type="text" name="cpf" placeholder="Seu CPF" required>
+            <button type="submit">Confirmar Reserva</button>
+        </form>
+    {% else %}
+        <p>O carrinho está vazio.</p>
+    {% endif %}
+</body>
+</html>

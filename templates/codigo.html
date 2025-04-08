@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva Confirmada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+    <h2>Reserva confirmada!</h2>
+    <p>Seu código de retirada é:</p>
+    <h1 style="font-size: 48px;">{{ codigo }}</h1>
+    <a href="{{ url_for('index') }}">← Voltar para a biblioteca</a>
+</body>
+</html>

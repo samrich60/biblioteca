@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Olavo de Carvalho</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Biblioteca Olavo de Carvalho</h1>
+        <div class="top-bar">
+            <input type="text" id="pesquisa" placeholder="Pesquisar livro...">
+            <button id="toggleTheme">Alternar Tema</button>
+            <a href="{{ url_for('carrinho') }}" class="carrinho-link">🛒 Carrinho</a>
+        </div>
+    </header>
+
+    <div class="livros-container">
+        {% for livro in livros %}
+        <div class="livro" data-titulo="{{ livro.titulo|lower }}">
+            <img src="{{ url_for('static', filename=livro.imagem) }}" alt="{{ livro.titulo }}">
+            <h3>{{ livro.titulo }}</h3>
+            <p><strong>Gênero:</strong> {{ livro.categoria }}</p>
+            <p><strong>Valor:</strong> R$ {{ livro.valor }}</p>
+            <div class="resumo">
+                <p>{{ livro.resumo }}</p>
+                <form action="/adicionar_carrinho" method="post">
+                    <input type="hidden" name="livro_id" value="{{ livro.id }}">
+                    <button type="submit" class="btn-adicionar" data-id="{{ livro.id }}">Adicionar ao carrinho</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Script JS externo -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
