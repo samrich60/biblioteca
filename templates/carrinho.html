@@ -4,33 +4,160 @@
     <meta charset="UTF-8">
     <title>Seu Carrinho</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        a {
+            color: #ccc;
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        form {
+            display: inline;
+        }
+
+        button {
+            padding: 6px 12px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #c82333;
+        }
+
+        .formulario-reserva {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .formulario-reserva input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .formulario-reserva button {
+            background-color: #28a745;
+        }
+
+        .formulario-reserva button:hover {
+            background-color: #218838;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-    <header>
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <title>Seu Carrinho</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+    </head>
+    <body>
+        <header>
+            <h1>Seu Carrinho</h1>
+            <a href="{{ url_for('index') }}">← Voltar para os livros</a>
+        </header>
+    
+        {% if carrinho %}
+            <ul>
+                {% for item in carrinho %}
+                <li>
+                    <strong>{{ item.titulo }}</strong> (R$ {{ item.valor }})
+                    <form action="/remover_carrinho" method="post" style="display:inline;">
+                        <input type="hidden" name="livro_id" value="{{ item.id }}">
+                        <button type="submit">Remover</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+    
+            <form action="/confirmar_carrinho" method="post">
+                <input type="text" name="nome" placeholder="Seu nome" required>
+                <input type="text" name="cpf" placeholder="Seu CPF" required>
+                <button type="submit">Confirmar Reserva</button>
+            </form>
+        {% else %}
+            <p>O carrinho está vazio.</p>
+        {% endif %}
+    </body>
+    </html>   <header>
         <h1>Seu Carrinho</h1>
         <a href="{{ url_for('index') }}">← Voltar para os livros</a>
     </header>
 
-    {% if carrinho %}
-        <ul>
-            {% for item in carrinho %}
-            <li>
-                <strong>{{ item.titulo }}</strong> (R$ {{ item.valor }})
-                <form action="/remover_carrinho" method="post" style="display:inline;">
-                    <input type="hidden" name="livro_id" value="{{ item.id }}">
-                    <button type="submit">Remover</button>
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
+    <main>
+        {% if carrinho %}
+            <ul>
+                {% for item in carrinho %}
+                <li>
+                    <span><strong>{{ item.titulo }}</strong> (R$ {{ item.valor }})</span>
+                    <form action="/remover_carrinho" method="post">
+                        <input type="hidden" name="livro_id" value="{{ item.id }}">
+                        <button type="submit">Remover</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
 
-        <form action="/confirmar_carrinho" method="post">
-            <input type="text" name="nome" placeholder="Seu nome" required>
-            <input type="text" name="cpf" placeholder="Seu CPF" required>
-            <button type="submit">Confirmar Reserva</button>
-        </form>
-    {% else %}
-        <p>O carrinho está vazio.</p>
-    {% endif %}
+            <form action="/confirmar_carrinho" method="post" class="formulario-reserva">
+                <input type="text" name="nome" placeholder="Seu nome" required>
+                <input type="text" name="cpf" placeholder="Seu CPF" required>
+                <button type="submit">Confirmar Reserva</button>
+            </form>
+        {% else %}
+            <p class="vazio">🛒 O carrinho está vazio.</p>
+        {% endif %}
+    </main>
 </body>
 </html>
