@@ -2,20 +2,20 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca Olavo de Carvalho</title>
+    <title>Bibliotech</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
 </head>
 <body>
     <header>
-        <h1>Biblioteca Olavo de Carvalho</h1>
+        <h1>Bibliotech</h1>
         <div class="top-bar">
-            <input type="text" id="pesquisa" placeholder="Pesquisar livro...">
+            <input type="text" id="pesquisa" placeholder="Pesquisar livro..." onkeyup="filtrarLivros()">
             <button id="toggleTheme">Alternar Tema</button>
             <a href="{{ url_for('carrinho') }}" class="carrinho-link">🛒 Carrinho</a>
         </div>
     </header>
 
-    <div class="livros-container">
+    <div class="livros-container" id="livros-container">
         {% for livro in livros %}
         <div class="livro" data-titulo="{{ livro.titulo|lower }}">
             <img src="{{ url_for('static', filename=livro.imagem) }}" alt="{{ livro.titulo }}">
@@ -33,7 +33,24 @@
         {% endfor %}
     </div>
 
-    <!-- Script JS externo -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // Função para filtrar livros na pesquisa
+        function filtrarLivros() {
+            let input = document.getElementById('pesquisa');
+            let filter = input.value.toLowerCase();
+            let livrosContainer = document.getElementById('livros-container');
+            let livros = livrosContainer.getElementsByClassName('livro');
+
+            Array.from(livros).forEach(livro => {
+                let titulo = livro.getAttribute('data-titulo');
+                if (titulo.includes(filter)) {
+                    livro.style.display = '';
+                } else {
+                    livro.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import random
-import string
 
 app = Flask(__name__)
-app.secret_key = 'biblioteca_segura'
+app.secret_key = 'chave_secreta'
 
 livros_disponiveis = [
     {"id": 1, "titulo": "Dom Casmurro", "valor": 10.0, "imagem": "dom.jpg",
@@ -48,71 +46,40 @@ livros_disponiveis = [
         "categoria": "Filosofia", "resumo": "Kafka narra a transformação de um homem em inseto."},
 ]
 
-reservas = []
 
-
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html", livros=livros_disponiveis)
+    return render_template('index.html', livros=livros_disponiveis)
 
 
-@app.route("/adicionar_carrinho", methods=["POST"])
+@app.route('/adicionar_carrinho', methods=['POST'])
 def adicionar_carrinho():
-    livro_id = int(request.form["livro_id"])
-    if "carrinho" not in session:
-        session["carrinho"] = []
-    if livro_id not in session["carrinho"]:
-        session["carrinho"].append(livro_id)
-    session.modified = True
-    return redirect(url_for("carrinho"))
+    livro_id = int(request.form['livro_id'])
+    livro = next((l for l in livros_disponiveis if l['id'] == livro_id), None)
+    if livro:
+        if 'carrinho' not in session:
+            session['carrinho'] = []
+        # Verificar se o livro já foi adicionado ao carrinho, evitando duplicatas
+        if livro not in session['carrinho']:
+            session['carrinho'].append(livro)
+            session.modified = True
+    return redirect(url_for('index'))
 
 
-@app.route("/remover_livro", methods=["POST"])
-def remover_livro():
-    livro_id = int(request.form["livro_id"])
-    if "carrinho" in session and livro_id in session["carrinho"]:
-        session["carrinho"].remove(livro_id)
-        session.modified = True
-    return redirect(url_for("ver_carrinho"))
-
-
-@app.route("/carrinho")
+@app.route('/carrinho')
 def carrinho():
-    carrinho_ids = session.get("carrinho", [])
-    livros_carrinho = [
-        livro for livro in livros_disponiveis if livro["id"] in carrinho_ids]
-    return render_template("carrinho.html", livros=livros_carrinho)
+    carrinho = session.get('carrinho', [])
+    return render_template('carrinho.html', carrinho=carrinho)
 
 
-@app.route("/reservar", methods=["POST"])
-def reservar():
-    nome = request.form["nome"]
-    cpf = request.form["cpf"]
-    carrinho_ids = session.get("carrinho", [])
-    livros_reservados = [
-        livro for livro in livros_disponiveis if livro["id"] in carrinho_ids]
-
-    if livros_reservados:
-        codigo = ''.join(random.choices(
-            string.ascii_uppercase + string.digits, k=6))
-        reservas.append({
-            "codigo": codigo,
-            "nome": nome,
-            "cpf": cpf,
-            "livros": livros_reservados
-        })
-        session.pop("carrinho", None)
-        return render_template("codigo.html", codigo=codigo)
-    return "Nenhum livro no carrinho", 400
+@app.route('/remover_livro/<int:livro_id>')
+def remover_livro(livro_id):
+    carrinho = session.get('carrinho', [])
+    carrinho = [livro for livro in carrinho if livro['id'] != livro_id]
+    session['carrinho'] = carrinho
+    session.modified = True
+    return redirect(url_for('carrinho'))
 
 
-@app.route("/admin")
-def admin():
-    return render_template("admin.html")
-
-
-@app.route("/buscar_reserva", methods=["POST"])
-def buscar_reserva():
-    codigo = request.form["codigo"]
-    reserva = next((r for r in reservas if r["codigo"] == codigo), None)
-    return render_template("resultado.html", reserva=reserva)
+if __name__ == '__main__':
+    app.run(debug=True)
