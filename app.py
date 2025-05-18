@@ -55,29 +55,28 @@ def index():
 @app.route('/adicionar_carrinho', methods=['POST'])
 def adicionar_carrinho():
     livro_id = int(request.form['livro_id'])
-    livro = next((l for l in livros_disponiveis if l['id'] == livro_id), None)
-    if livro:
-        if 'carrinho' not in session:
-            session['carrinho'] = []
-        # Verificar se o livro já foi adicionado ao carrinho, evitando duplicatas
-        if livro not in session['carrinho']:
-            session['carrinho'].append(livro)
-            session.modified = True
+    if 'carrinho' not in session:
+        session['carrinho'] = []
+
+    if livro_id not in session['carrinho']:
+        session['carrinho'].append(livro_id)
+        session.modified = True
+
     return redirect(url_for('index'))
 
 
 @app.route('/carrinho')
 def carrinho():
-    carrinho = session.get('carrinho', [])
-    return render_template('carrinho.html', carrinho=carrinho)
+    carrinho_ids = session.get('carrinho', [])
+    carrinho_livros = [livro for livro in livros_disponiveis if livro['id'] in carrinho_ids]
+    return render_template('carrinho.html', carrinho=carrinho_livros)
 
 
 @app.route('/remover_livro/<int:livro_id>')
 def remover_livro(livro_id):
-    carrinho = session.get('carrinho', [])
-    carrinho = [livro for livro in carrinho if livro['id'] != livro_id]
-    session['carrinho'] = carrinho
-    session.modified = True
+    if 'carrinho' in session:
+        session['carrinho'] = [id for id in session['carrinho'] if id != livro_id]
+        session.modified = True
     return redirect(url_for('carrinho'))
 
 

@@ -11,9 +11,8 @@
         <p>Obrigado por reservar com a biblioteca da faculdade.</p>
         <p>Seu código de reserva é:</p>
         <div class="codigo-reserva">{{ codigo }}</div>
-        <p>Apresente esse código ao atendente da biblioteca para retirar o livro.</p>
-
-        <a class="voltar-link" href="{{ url_for('index') }}">← Fazer nova reserva</a>
+        <p>Apresente esse código ao atendente da biblioteca para retirar o(s) livro(s).</p>
+        <a href="{{ url_for('index') }}">← Fazer nova reserva</a>
     </div>
 </body>
 </html>

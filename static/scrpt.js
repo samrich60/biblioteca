@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             form.appendChild(input);
             document.body.appendChild(form);
-            form.submit(); // Submete o formulário para adicionar o livro ao carrinho
+            form.submit();
         });
     });
 });

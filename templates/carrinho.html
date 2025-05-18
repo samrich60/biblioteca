@@ -3,126 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <title>Seu Carrinho</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='scrpt.js') }}"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            background-color: #f4f4f4;
+            color: #222;
             margin: 0;
             padding: 0;
         }
 
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
+        .dark-theme {
+            background-color: #121212;
+            color: #eee;
         }
 
-        a {
-            color: #ccc;
-            text-decoration: none;
-            margin-top: 10px;
-            display: inline-block;
-        }
-
-        main {
-            max-width: 600px;
+        .container {
+            max-width: 900px;
             margin: 30px auto;
-            background-color: white;
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        ul {
-            list-style: none;
-            padding: 0;
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: inherit;
         }
 
-        li {
-            background-color: #fafafa;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
+        .livro {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            background-color: #fff;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: background 0.3s;
         }
 
-        form {
-            display: inline;
+        .dark-theme .livro {
+            background-color: #1e1e1e;
         }
 
-        button {
-            padding: 6px 12px;
-            background-color: #dc3545;
+        .livro img {
+            width: 100px;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .livro-info {
+            flex: 1;
+            padding: 15px;
+        }
+
+        .livro-info h3 {
+            margin: 0 0 10px;
+        }
+
+        .livro-info p {
+            margin: 4px 0;
+        }
+
+        .btn-remover {
+            background-color: #ff4444;
             color: white;
             border: none;
-            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 10px;
             cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s ease;
         }
 
-        button:hover {
-            background-color: #c82333;
+        .btn-remover:hover {
+            background-color: #cc0000;
         }
 
-        .formulario-reserva {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .dark-theme .btn-remover {
+            background-color: #ff5555;
+            color: #111;
         }
 
-        .formulario-reserva input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+        .btn-voltar {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            background-color: #5555ff;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
         }
 
-        .formulario-reserva button {
-            background-color: #28a745;
+        .btn-voltar:hover {
+            background-color: #3333cc;
         }
 
-        .formulario-reserva button:hover {
-            background-color: #218838;
+        .dark-theme .btn-voltar {
+            background-color: #7777ff;
+            color: #111;
         }
 
-        .vazio {
-            text-align: center;
-            color: #777;
+        #toggleTheme {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            padding: 8px 14px;
+            border: none;
+            background-color: #333;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .dark-theme #toggleTheme {
+            background-color: #ccc;
+            color: #111;
         }
     </style>
 </head>
 <body>
-    <header>
+    <button id="toggleTheme">Alternar Tema</button>
+
+    <div class="container">
         <h1>Seu Carrinho</h1>
-        <a href="{{ url_for('index') }}">← Voltar para os livros</a>
-    </header>
 
-    <main>
         {% if carrinho %}
-            <ul>
-                {% for item in carrinho %}
-                <li>
-                    <span><strong>{{ item.titulo }}</strong> (R$ {{ item.valor }})</span>
-                    <form action="/remover_carrinho" method="post">
-                        <input type="hidden" name="livro_id" value="{{ item.id }}">
-                        <button type="submit">Remover</button>
-                    </form>
-                </li>
-                {% endfor %}
-            </ul>
-
-            <form action="/confirmar_carrinho" method="post" class="formulario-reserva">
-                <input type="text" name="nome" placeholder="Seu nome" required>
-                <input type="text" name="cpf" placeholder="Seu CPF" required>
-                <button type="submit">Confirmar Reserva</button>
-            </form>
+            {% for livro in carrinho %}
+                <div class="livro">
+                    <img src="{{ url_for('static', filename=livro.imagem) }}" alt="{{ livro.titulo }}">
+                    <div class="livro-info">
+                        <h3>{{ livro.titulo }}</h3>
+                        <p><strong>Categoria:</strong> {{ livro.categoria }}</p>
+                        <p><strong>Resumo:</strong> {{ livro.resumo }}</p>
+                        <p><strong>Preço:</strong> R$ {{ livro.valor }}</p>
+                    </div>
+                    <a href="{{ url_for('remover_livro', livro_id=livro.id) }}" class="btn-remover">Remover</a>
+                </div>
+            {% endfor %}
         {% else %}
-            <p class="vazio">🛒 O carrinho está vazio.</p>
+            <p>Seu carrinho está vazio.</p>
         {% endif %}
-    </main>
+
+        <a href="{{ url_for('index') }}" class="btn-voltar">Voltar à Biblioteca</a>
+    </div>
 </body>
 </html>

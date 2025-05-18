@@ -2,13 +2,30 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Reserva Confirmada</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+    <title>Confirmação de Reserva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Reserva confirmada!</h2>
-    <p>Seu código de retirada é:</p>
-    <h1 style="font-size: 48px;">{{ codigo }}</h1>
-    <a href="{{ url_for('index') }}">← Voltar para a biblioteca</a>
+    <div class="container">
+        <h1>Confirme sua Reserva</h1>
+        <div class="livro-detalhes">
+            <p><strong>Livro:</strong> {{ livro }}</p>
+            <p><strong>Valor:</strong> R$ {{ valor }}</p>
+        </div>
+        <div class="cliente-dados">
+            <p><strong>Nome:</strong> {{ nome }}</p>
+            <p><strong>CPF:</strong> {{ cpf }}</p>
+        </div>
+
+        <form action="{{ url_for('confirmar_reserva') }}" method="post">
+            <input type="hidden" name="nome" value="{{ nome }}">
+            <input type="hidden" name="cpf" value="{{ cpf }}">
+            <input type="hidden" name="livro" value="{{ livro }}">
+            <input type="hidden" name="valor" value="{{ valor }}">
+            <button type="submit">Confirmar Reserva</button>
+        </form>
+
+        <a class="voltar-link" href="{{ url_for('index') }}">← Voltar para o início</a>
+    </div>
 </body>
 </html>
