@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'chave_secreta'
@@ -43,7 +44,7 @@ livros_disponiveis = [
     {"id": 19, "titulo": "Capitães da Areia", "valor": 13.5, "imagem": "capitaes.jpg",
         "categoria": "Drama", "resumo": "A vida de meninos de rua em Salvador."},
     {"id": 20, "titulo": "A Metamorfose", "valor": 12.0, "imagem": "metamorfose.jpg",
-        "categoria": "Filosofia", "resumo": "Kafka narra a transformação de um homem em inseto."},
+        "categoria": "Filosofia", "resumo": "Kafka narra a transformação de um homem em inseto."}
 ]
 
 
@@ -57,27 +58,61 @@ def adicionar_carrinho():
     livro_id = int(request.form['livro_id'])
     if 'carrinho' not in session:
         session['carrinho'] = []
-
     if livro_id not in session['carrinho']:
         session['carrinho'].append(livro_id)
         session.modified = True
-
     return redirect(url_for('index'))
 
 
 @app.route('/carrinho')
 def carrinho():
     carrinho_ids = session.get('carrinho', [])
-    carrinho_livros = [livro for livro in livros_disponiveis if livro['id'] in carrinho_ids]
+    carrinho_livros = [
+        livro for livro in livros_disponiveis if livro['id'] in carrinho_ids]
     return render_template('carrinho.html', carrinho=carrinho_livros)
 
 
 @app.route('/remover_livro/<int:livro_id>')
 def remover_livro(livro_id):
     if 'carrinho' in session:
-        session['carrinho'] = [id for id in session['carrinho'] if id != livro_id]
+        session['carrinho'] = [
+            id for id in session['carrinho'] if id != livro_id]
         session.modified = True
     return redirect(url_for('carrinho'))
+
+
+@app.route('/finalizar_reserva', methods=['POST'])
+def finalizar_reserva():
+    nome = request.form.get('nome')
+    cpf = request.form.get('cpf')
+    carrinho_ids = session.get('carrinho', [])
+
+    if not carrinho_ids:
+        return redirect(url_for('carrinho'))
+
+    livros = [livro for livro in livros_disponiveis if livro['id'] in carrinho_ids]
+    livros_titulos = ', '.join([livro['titulo'] for livro in livros])
+    valor_total = sum([livro['valor'] for livro in livros])
+
+    codigo = str(uuid.uuid4())[:8]
+
+    session['reserva'] = {
+        'nome': nome,
+        'cpf': cpf,
+        'livros': livros_titulos,
+        'valor': valor_total,
+        'codigo': codigo
+    }
+
+    session.pop('carrinho', None)
+
+    return render_template('sucesso.html', codigo=codigo)
+
+
+@app.route('/admin')
+def admin():
+    reserva = session.get('reserva')
+    return render_template('resultado.html', reserva=reserva)
 
 
 if __name__ == '__main__':

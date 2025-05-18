@@ -2,30 +2,22 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Confirmação de Reserva</title>
+    <title>Finalizar Reserva</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Confirme sua Reserva</h1>
-        <div class="livro-detalhes">
-            <p><strong>Livro:</strong> {{ livro }}</p>
-            <p><strong>Valor:</strong> R$ {{ valor }}</p>
-        </div>
-        <div class="cliente-dados">
-            <p><strong>Nome:</strong> {{ nome }}</p>
-            <p><strong>CPF:</strong> {{ cpf }}</p>
-        </div>
+        <h1>Finalizar Reserva</h1>
+        <form method="POST" action="{{ url_for('finalizar_reserva') }}">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
 
-        <form action="{{ url_for('confirmar_reserva') }}" method="post">
-            <input type="hidden" name="nome" value="{{ nome }}">
-            <input type="hidden" name="cpf" value="{{ cpf }}">
-            <input type="hidden" name="livro" value="{{ livro }}">
-            <input type="hidden" name="valor" value="{{ valor }}">
-            <button type="submit">Confirmar Reserva</button>
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" required>
+
+            <button type="submit">Finalizar</button>
         </form>
-
-        <a class="voltar-link" href="{{ url_for('index') }}">← Voltar para o início</a>
+        <a href="{{ url_for('ver_carrinho') }}">← Voltar ao Carrinho</a>
     </div>
 </body>
 </html>
